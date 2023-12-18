@@ -8,7 +8,7 @@ public class WeaponShootLimit : WeaponBase
     [SerializeField] private float timeToRecharge = 1f;
 
     private float _currentShots;
-    private bool _recharging = false;
+    public bool _recharging = false;
 
     protected override IEnumerator ShootingCoroutine()
     {

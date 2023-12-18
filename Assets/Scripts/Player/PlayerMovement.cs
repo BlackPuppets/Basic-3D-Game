@@ -2,9 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerMovement : MonoBehaviour
+public class PlayerMovement : MonoBehaviour, IDamageable
 {
     private CharacterController characterController;
+    [SerializeField] private float health = 10f;
     [SerializeField] private float speed = 25f;
     [SerializeField] private float runningSpeed = 40f;
     [SerializeField] private float turnSpeed = 1f;
@@ -83,6 +84,15 @@ public class PlayerMovement : MonoBehaviour
         currentSpeed.y = vSpeed;
 
         return currentSpeed;
+    }
+
+    public void TakeDamage(float damage)
+    {
+        health -= damage;
+        if (health <= 0)
+        {
+            Destroy(gameObject);
+        }
     }
 
 }

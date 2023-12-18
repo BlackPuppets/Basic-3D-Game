@@ -7,8 +7,8 @@ namespace Enemy{
 
     public class EnemyBase : MonoBehaviour, IDamageable
     {
-        private float startLife = 10;
-        [SerializeField]private float currentLife;
+        protected float startLife = 10;
+        [SerializeField]protected float currentLife;
 
 
         //[Header("Start Animation")]
@@ -18,7 +18,7 @@ namespace Enemy{
             Init();
         }
 
-        private void Init()
+        protected virtual void Init()
         {
             currentLife = startLife;
         }
@@ -44,6 +44,15 @@ namespace Enemy{
         public void TakeDamage(float damage)
         {
             OnDamage(damage);
+        }
+
+        private void OnCollisionEnter(Collision collision)
+        {
+            PlayerMovement player = collision.transform.GetComponent<PlayerMovement>();
+            if(player != null)
+            {
+                player.TakeDamage(2);
+            }
         }
     }
 
