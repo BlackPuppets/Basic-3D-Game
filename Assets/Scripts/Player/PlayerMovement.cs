@@ -101,6 +101,8 @@ public class PlayerMovement : MonoBehaviour, IDamageable
     {
         currentHealth -= damage;
         playerHealth.value = currentHealth / startingHealth;
+        EffectsManager.GetInstance().ChangeVinette();
+        ShakeCamera.GetInstance().Shake(5,5,0.3f);
         if (currentHealth <= 0)
         {
             Revive();
