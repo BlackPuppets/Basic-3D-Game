@@ -1,16 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
+using UnityEngine.UI;
 
 public class PlayerMovement : MonoBehaviour, IDamageable
 {
     private CharacterController characterController;
-    [SerializeField] private float health = 10f;
+    [SerializeField] private float startingHealth = 10f;
+    [SerializeField] private float currentHealth;
     [SerializeField] private float speed = 25f;
     [SerializeField] private float runningSpeed = 40f;
     [SerializeField] private float turnSpeed = 1f;
     [SerializeField] private float jumpSpeed = 15f;
     [SerializeField] private float gravity = -9.8f;
+    [SerializeField] private Slider playerHealth;
 
     [SerializeField] private KeyCode jumpKeyCode = KeyCode.Space;
     [SerializeField] private KeyCode runKeyCode = KeyCode.LeftShift;
@@ -35,6 +39,7 @@ public class PlayerMovement : MonoBehaviour, IDamageable
     private void Awake()
     {
         characterController = GetComponent<CharacterController>();
+        currentHealth = startingHealth;
     }
 
     private void Update()
@@ -86,12 +91,30 @@ public class PlayerMovement : MonoBehaviour, IDamageable
         return currentSpeed;
     }
 
+    private void Revive()
+    {
+        TakeDamage(-startingHealth);
+        Respawn();
+    }
+
     public void TakeDamage(float damage)
     {
-        health -= damage;
-        if (health <= 0)
+        currentHealth -= damage;
+        playerHealth.value = currentHealth / startingHealth;
+        if (currentHealth <= 0)
         {
-            Destroy(gameObject);
+            Revive();
+            //Destroy(gameObject);
+        }
+    }
+
+    private void Respawn()
+    {
+        if (CheckpointManager.GetInstance().HasCheckpoint())
+        {
+            characterController.enabled = false;
+            this.transform.position = CheckpointManager.GetInstance().GetPositionFromLastCheckpoint();
+            characterController.enabled = true;
         }
     }
 
