@@ -36,8 +36,15 @@ public class PlayerMovement : MonoBehaviour, IDamageable
     public delegate void OnDeath();
     public event OnDeath OnDeathEvent;
 
+    public static PlayerMovement instance;
+
     private void Awake()
     {
+        if (instance == null)
+            instance = this;
+        else
+            Destroy(gameObject);
+
         characterController = GetComponent<CharacterController>();
         currentHealth = startingHealth;
     }
@@ -89,6 +96,12 @@ public class PlayerMovement : MonoBehaviour, IDamageable
         currentSpeed.y = vSpeed;
 
         return currentSpeed;
+    }
+
+    public void ResetLife()
+    {
+        currentHealth = startingHealth;
+        playerHealth.value = currentHealth / startingHealth;
     }
 
     private void Revive()
