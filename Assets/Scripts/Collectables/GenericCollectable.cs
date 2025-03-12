@@ -29,8 +29,12 @@ public class GenericCollectable : MonoBehaviour
 
     protected virtual void OnCollect() {
         PlayEffect();
-        if(audioSource != null) audioPlayAndDestroy.PlayAudio(audioSource);
-        ItemManager.instance.ChangeAmountByType(itemType);
+
+        if(audioSource != null) 
+            audioPlayAndDestroy.PlayAudio(audioSource);
+
+        if (itemType == ItemType.COIN || itemType == ItemType.LIFE_PACK) 
+            ItemManager.instance.ChangeAmountByType(itemType);
     }
     
     protected virtual void PlayEffect() { }

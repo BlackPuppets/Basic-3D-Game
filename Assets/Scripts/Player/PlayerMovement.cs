@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using Clothes;
 
 public class PlayerMovement : MonoBehaviour, IDamageable
 {
@@ -13,8 +14,10 @@ public class PlayerMovement : MonoBehaviour, IDamageable
     [SerializeField] private float runningSpeed = 40f;
     [SerializeField] private float turnSpeed = 1f;
     [SerializeField] private float jumpSpeed = 15f;
+    [SerializeField] private float playerDamageMultiplier = 1f;
     [SerializeField] private float gravity = -9.8f;
     [SerializeField] private Slider playerHealth;
+    [SerializeField] private ClotheChanger clothesChanger;
 
     [SerializeField] private KeyCode jumpKeyCode = KeyCode.Space;
     [SerializeField] private KeyCode runKeyCode = KeyCode.LeftShift;
@@ -47,6 +50,8 @@ public class PlayerMovement : MonoBehaviour, IDamageable
 
         characterController = GetComponent<CharacterController>();
         currentHealth = startingHealth;
+        if(clothesChanger == null)
+            clothesChanger = GetComponentInChildren<ClotheChanger>();
     }
 
     private void Update()
@@ -112,7 +117,7 @@ public class PlayerMovement : MonoBehaviour, IDamageable
 
     public void TakeDamage(float damage)
     {
-        currentHealth -= damage;
+        currentHealth -= damage * playerDamageMultiplier;
         playerHealth.value = currentHealth / startingHealth;
         EffectsManager.GetInstance().ChangeVinette();
         ShakeCamera.GetInstance().Shake(5,5,0.3f);
@@ -131,6 +136,44 @@ public class PlayerMovement : MonoBehaviour, IDamageable
             this.transform.position = CheckpointManager.GetInstance().GetPositionFromLastCheckpoint();
             characterController.enabled = true;
         }
+    }
+
+    public void ChangePlayerSpeed(float speed, float duration)
+    {
+        StartCoroutine(ChangePlayerSpeedCoroutine(speed, duration));
+    }
+
+    IEnumerator ChangePlayerSpeedCoroutine(float localSpeed, float duration)
+    {
+        var defaultSpeed = speed;
+        speed = localSpeed;
+        yield return new WaitForSeconds(duration);
+        speed = defaultSpeed;
+    }
+
+    public void ChangePlayerClothes(ClothSetup setup, float duration)
+    {
+        StartCoroutine(ChangePlayerClothesCoroutine(setup, duration));
+    }
+
+    IEnumerator ChangePlayerClothesCoroutine(ClothSetup setup, float duration)
+    {
+        clothesChanger.ChangeClothe(setup);
+        yield return new WaitForSeconds(duration);
+        clothesChanger.ResetTexture();
+    }
+
+    public void ChangePlayerDamageMultiplier(float damageMultiplier, float duration)
+    {
+        StartCoroutine(ChangePlayerDamageMultiplierCoroutine(damageMultiplier, duration));
+    }
+
+    IEnumerator ChangePlayerDamageMultiplierCoroutine(float damageMultiplier, float duration)
+    {
+        var defaultDamageMultiplier = playerDamageMultiplier;
+        playerDamageMultiplier = damageMultiplier;
+        yield return new WaitForSeconds(duration);
+        playerDamageMultiplier = defaultDamageMultiplier;
     }
 
 }

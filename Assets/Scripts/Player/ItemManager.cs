@@ -11,7 +11,8 @@ namespace Itens
     public enum ItemType
     {
         COIN,
-        LIFE_PACK
+        LIFE_PACK,
+        CLOTHE
     }
 
     public class ItemManager : MonoBehaviour
